@@ -1,0 +1,161 @@
+# Copyright (c) Abstract Machines
+# SPDX-License-Identifier: Apache-2.0
+
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-build: # Linting and building are combined to save time for setting up Go
+    name: Lint and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.x
+          cache-dependency-path: "go.sum"
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59.1
+
+      - name: Build all Binaries
+        run: |
+          make all -j $(nproc)
+
+  run-tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    needs: lint-and-build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.x
+          cache-dependency-path: "go.sum"
+
+      - name: Check for changes in specific paths
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          base: main
+          filters: |
+            workflow:
+              - ".github/workflows/tests.yml"
+
+            certs:
+              - "certs/**"
+              - "cmd/certs/**"
+              - "auth.pb.go"
+              - "auth_grpc.pb.go"
+              - "auth/**"
+              - "pkg/sdk/**"
+
+            consumers:
+              - "consumers/**"
+              - "cmd/cassandra-writer/**"
+              - "cmd/influxdb-writer/**"
+              - "cmd/mongodb-writer/**"
+              - "cmd/postgres-writer/**"
+              - "cmd/timescale-writer/**"
+              - "cmd/smpp-notifier/**"
+              - "cmd/smtp-notifier/**"
+              - "auth.pb.go"
+              - "auth_grpc.pb.go"
+              - "auth/**"
+              - "pkg/ulid/**"
+              - "pkg/uuid/**"
+              - "pkg/messaging/**"
+
+            lora:
+              - "lora/**"
+              - "cmd/lora/**"
+              - "pkg/messaging/**"
+              
+            opcua:
+              - "opcua/**"
+              - "cmd/opcua/**"
+              - "logger/**"
+
+            readers:
+              - "readers/**"
+              - "cmd/cassandra-reader/**"
+              - "cmd/influxdb-reader/**"
+              - "cmd/mongodb-reader/**"
+              - "cmd/postgres-reader/**"
+              - "cmd/timescale-reader/**"
+              - "auth.pb.go"
+              - "auth_grpc.pb.go"
+              - "things/**"
+              - "auth/**"
+
+            twins:
+              - "twins/**"
+              - "cmd/twins/**"
+              - "auth.pb.go"
+              - "auth_grpc.pb.go"
+              - "auth/**"
+              - "pkg/messaging/**"
+              - "pkg/ulid/**"
+              - "pkg/uuid/**"
+              - "logger/**"
+
+      - name: Create coverage directory
+        run: |
+          mkdir coverage
+
+      - name: Run certs tests
+        if: steps.changes.outputs.certs == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/certs.out ./certs/...
+
+      - name: Run consumers tests
+        if: steps.changes.outputs.consumers == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/consumers.out ./consumers/...
+
+      - name: Run LoRa tests
+        if: steps.changes.outputs.lora == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/lora.out ./lora/...
+
+      - name: Run OPC-UA tests
+        if: steps.changes.outputs.opcua == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/opcua.out ./opcua/...
+
+      - name: Run provision tests
+        if: steps.changes.outputs.provision == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/provision.out ./provision/...
+
+      - name: Run readers tests
+        if: steps.changes.outputs.readers == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/readers.out ./readers/...
+
+      - name: Run twins tests
+        if: steps.changes.outputs.twins == 'true' || steps.changes.outputs.workflow == 'true'
+        run: |
+          go test --race -v -count=1 -coverprofile=coverage/twins.out ./twins/...
+
+        with:
+          token: ${{ secrets.CODECOV }}
+          directory: ./coverage/
+          name: codecov-umbrella
+          verbose: true
