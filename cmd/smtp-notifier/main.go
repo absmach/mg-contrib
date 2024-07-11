@@ -31,7 +31,7 @@ import (
 	"github.com/absmach/magistrala/pkg/ulid"
 	"github.com/absmach/magistrala/pkg/uuid"
 	"github.com/absmach/mg-contrib/consumers/notifiers/smtp"
-	"github.com/absmach/mg-contrib/pkg/email"
+	email "github.com/absmach/mg-contrib/pkg/email"
 	"github.com/caarlos0/env/v10"
 	"github.com/jmoiron/sqlx"
 	"go.opentelemetry.io/otel/trace"

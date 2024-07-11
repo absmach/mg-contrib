@@ -18,10 +18,8 @@ import (
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
 
-const (
-	// Measurement for SenML messages.
-	defMeasurement = "messages"
-)
+// Measurement for SenML messages.
+const defMeasurement = "messages"
 
 var _ readers.MessageRepository = (*influxRepository)(nil)
 

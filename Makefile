@@ -4,8 +4,7 @@
 MG_DOCKER_IMAGE_NAME_PREFIX ?= magistrala
 BUILD_DIR = build
 SERVICES = opcua lora influxdb-writer influxdb-reader mongodb-writer \
-	mongodb-reader cassandra-writer cassandra-reader postgres-writer postgres-reader \
-	timescale-writer timescale-reader twins provision certs smtp-notifier smpp-notifier
+	mongodb-reader cassandra-writer cassandra-reader twins smtp-notifier smpp-notifier
 TEST_API_SERVICES = certs notifiers provision readers twins
 TEST_API = $(addprefix test_api_,$(TEST_API_SERVICES))
 DOCKERS = $(addprefix docker_,$(SERVICES))
