@@ -5,7 +5,7 @@ MG_DOCKER_IMAGE_NAME_PREFIX ?= magistrala
 BUILD_DIR = build
 SERVICES = opcua lora influxdb-writer influxdb-reader mongodb-writer \
 	mongodb-reader cassandra-writer cassandra-reader twins smtp-notifier smpp-notifier
-TEST_API_SERVICES = certs notifiers provision readers twins
+TEST_API_SERVICES = notifiers readers twins
 TEST_API = $(addprefix test_api_,$(TEST_API_SERVICES))
 DOCKERS = $(addprefix docker_,$(SERVICES))
 DOCKERS_DEV = $(addprefix docker_dev_,$(SERVICES))
@@ -69,32 +69,11 @@ define make_docker_dev
 		-f docker/Dockerfile.dev ./build
 endef
 
-ADDON_SERVICES = bootstrap cassandra-reader cassandra-writer certs \
-					influxdb-reader influxdb-writer lora-adapter mongodb-reader mongodb-writer \
-					opcua-adapter postgres-reader postgres-writer provision smpp-notifier smtp-notifier \
-					timescale-reader timescale-writer twins journal
-
-EXTERNAL_SERVICES = vault prometheus
-
-ifneq ($(filter run%,$(firstword $(MAKECMDGOALS))),)
-  temp_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  DOCKER_COMPOSE_COMMAND := $(if $(filter $(DOCKER_COMPOSE_COMMANDS_SUPPORTED),$(temp_args)), $(filter $(DOCKER_COMPOSE_COMMANDS_SUPPORTED),$(temp_args)), $(DEFAULT_DOCKER_COMPOSE_COMMAND))
-  $(eval $(DOCKER_COMPOSE_COMMAND):;@)
-endif
-
-ifneq ($(filter run_addons%,$(firstword $(MAKECMDGOALS))),)
-  temp_args := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  RUN_ADDON_ARGS :=  $(if $(filter-out $(DOCKER_COMPOSE_COMMANDS_SUPPORTED),$(temp_args)), $(filter-out $(DOCKER_COMPOSE_COMMANDS_SUPPORTED),$(temp_args)),$(ADDON_SERVICES) $(EXTERNAL_SERVICES))
-  $(eval $(RUN_ADDON_ARGS):;@)
-endif
-
 ifneq ("$(wildcard docker/ssl/certs/*-grpc-*)","")
 GRPC_MTLS_CERT_FILES_EXISTS = 1
 else
 GRPC_MTLS_CERT_FILES_EXISTS = 0
 endif
-
-FILTERED_SERVICES = $(filter-out $(RUN_ADDON_ARGS), $(SERVICES))
 
 all: $(SERVICES)
 
@@ -167,7 +146,7 @@ test_api_notifiers: TEST_API_URL := http://localhost:9014 # This can be the URL 
 $(TEST_API):
 	$(call test_api_service,$(@),$(TEST_API_URL))
 
-$(FILTERED_SERVICES):
+$(SERVICES):
 	$(call compile_service,$(@))
 
 $(DOCKERS):
