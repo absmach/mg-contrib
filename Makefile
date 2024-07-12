@@ -101,8 +101,12 @@ mocks:
 	@unset MOCKERY_VERSION && go generate ./...
 
 
+DIRS = consumers readers opcua twins lora
 test: mocks
-	go test -v --race -count 1 -tags test -coverprofile=coverage.out ./...
+	mkdir -p coverage
+	@for dir in $(DIRS); do \
+        go test -v --race -count 1 -tags test -coverprofile=coverage/$$dir.out $$(go list ./... | grep $$dir | grep -v 'cmd'); \
+    done
 
 define test_api_service
 	$(eval svc=$(subst test_api_,,$(1)))
