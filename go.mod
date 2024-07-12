@@ -5,7 +5,7 @@ go 1.22.5
 require (
 	github.com/0x6flab/namegenerator v1.4.0
 	github.com/absmach/callhome v0.14.0
-	github.com/absmach/magistrala v0.14.1-0.20240709113739-04c359462746
+	github.com/absmach/magistrala v0.14.1-0.20240712083612-468362aac4cf
 	github.com/absmach/senml v1.0.5
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/eclipse/paho.mqtt.golang v1.4.3
@@ -138,7 +138,7 @@ require (
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240711142825-46eb208f015d // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
