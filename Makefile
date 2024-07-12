@@ -124,23 +124,13 @@ define test_api_service
 		exit 1; \
 	fi
 
-	@if [ "$(svc)" = "http" ]; then \
-		st run api/openapi/$(svc).yml \
-		--checks all \
-		--base-url $(2) \
-		--header "Authorization: Thing $(THING_SECRET)" \
-		--contrib-openapi-formats-uuid \
-		--hypothesis-suppress-health-check=filter_too_much \
-		--stateful=links; \
-	else \
-		st run api/openapi/$(svc).yml \
-		--checks all \
-		--base-url $(2) \
-		--header "Authorization: Bearer $(USER_TOKEN)" \
-		--contrib-openapi-formats-uuid \
-		--hypothesis-suppress-health-check=filter_too_much \
-		--stateful=links; \
-	fi
+	st run api/openapi/$(svc).yml \
+	--checks all \
+	--base-url $(2) \
+	--header "Authorization: Bearer $(USER_TOKEN)" \
+	--contrib-openapi-formats-uuid \
+	--hypothesis-suppress-health-check=filter_too_much \
+	--stateful=links;
 endef
 
 test_api_twins: TEST_API_URL := http://localhost:9018
