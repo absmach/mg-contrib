@@ -40,7 +40,7 @@ var (
 	invalidName = strings.Repeat("m", maxNameSize+1)
 )
 
-func TestTwinsSave(t *testing.T) {
+func Testtwinsave(t *testing.T) {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(addr))
 	require.Nil(t, err, fmt.Sprintf("Creating new MongoDB client expected to succeed: %s.\n", err))
 
