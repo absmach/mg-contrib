@@ -122,13 +122,8 @@ mocks:
 	@unset MOCKERY_VERSION && go generate ./...
 
 
-DIRS = consumers readers postgres internal opcua
 test: mocks
-	mkdir -p coverage
-	@for dir in $(DIRS); do \
-        go test -v --race -count 1 -tags test -coverprofile=coverage/$$dir.out $$(go list ./... | grep $$dir | grep -v 'cmd'); \
-    done
-	go test -v --race -count 1 -tags test -coverprofile=coverage/coverage.out $$(go list ./... | grep -v 'consumers\|readers\|postgres\|internal\|opcua\|cmd')
+	go test -v --race -count 1 -tags test -coverprofile=coverage.out ./...
 
 define test_api_service
 	$(eval svc=$(subst test_api_,,$(1)))
