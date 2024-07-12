@@ -58,14 +58,6 @@ jobs:
             workflow:
               - ".github/workflows/tests.yml"
 
-            certs:
-              - "certs/**"
-              - "cmd/certs/**"
-              - "auth.pb.go"
-              - "auth_grpc.pb.go"
-              - "auth/**"
-              - "pkg/sdk/**"
-
             consumers:
               - "consumers/**"
               - "cmd/cassandra-writer/**"
@@ -75,54 +67,28 @@ jobs:
               - "cmd/timescale-writer/**"
               - "cmd/smpp-notifier/**"
               - "cmd/smtp-notifier/**"
-              - "auth.pb.go"
-              - "auth_grpc.pb.go"
-              - "auth/**"
-              - "pkg/ulid/**"
-              - "pkg/uuid/**"
-              - "pkg/messaging/**"
 
             lora:
               - "lora/**"
               - "cmd/lora/**"
-              - "pkg/messaging/**"
-              
+
             opcua:
               - "opcua/**"
               - "cmd/opcua/**"
-              - "logger/**"
 
             readers:
               - "readers/**"
               - "cmd/cassandra-reader/**"
               - "cmd/influxdb-reader/**"
               - "cmd/mongodb-reader/**"
-              - "cmd/postgres-reader/**"
-              - "cmd/timescale-reader/**"
-              - "auth.pb.go"
-              - "auth_grpc.pb.go"
-              - "things/**"
-              - "auth/**"
 
             twins:
               - "twins/**"
               - "cmd/twins/**"
-              - "auth.pb.go"
-              - "auth_grpc.pb.go"
-              - "auth/**"
-              - "pkg/messaging/**"
-              - "pkg/ulid/**"
-              - "pkg/uuid/**"
-              - "logger/**"
 
       - name: Create coverage directory
         run: |
           mkdir coverage
-
-      - name: Run certs tests
-        if: steps.changes.outputs.certs == 'true' || steps.changes.outputs.workflow == 'true'
-        run: |
-          go test --race -v -count=1 -coverprofile=coverage/certs.out ./certs/...
 
       - name: Run consumers tests
         if: steps.changes.outputs.consumers == 'true' || steps.changes.outputs.workflow == 'true'
@@ -138,11 +104,6 @@ jobs:
         if: steps.changes.outputs.opcua == 'true' || steps.changes.outputs.workflow == 'true'
         run: |
           go test --race -v -count=1 -coverprofile=coverage/opcua.out ./opcua/...
-
-      - name: Run provision tests
-        if: steps.changes.outputs.provision == 'true' || steps.changes.outputs.workflow == 'true'
-        run: |
-          go test --race -v -count=1 -coverprofile=coverage/provision.out ./provision/...
 
       - name: Run readers tests
         if: steps.changes.outputs.readers == 'true' || steps.changes.outputs.workflow == 'true'

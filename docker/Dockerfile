@@ -9,7 +9,7 @@ ARG VERSION
 ARG COMMIT
 ARG TIME
 
-WORKDIR /go/src/github.com/absmach/magistrala
+WORKDIR /go/src/github.com/mg-contirb
 COPY . .
 RUN apk update \
     && apk add make\
