@@ -160,9 +160,7 @@ define test_api_service
 	fi
 endef
 
-test_api_certs: TEST_API_URL := http://localhost:9019
 test_api_twins: TEST_API_URL := http://localhost:9018
-test_api_provision: TEST_API_URL := http://localhost:9016
 test_api_readers: TEST_API_URL := http://localhost:9009 # This can be the URL of any reader service.
 test_api_notifiers: TEST_API_URL := http://localhost:9014 # This can be the URL of any notifier service.
 
@@ -204,44 +202,3 @@ release:
 
 rundev:
 	cd scripts && ./run.sh
-
-grpc_mtls_certs:
-	$(MAKE) -C docker/ssl auth_grpc_certs things_grpc_certs
-
-check_tls:
-ifeq ($(GRPC_TLS),true)
-	@unset GRPC_MTLS
-	@echo "gRPC TLS is enabled"
-	GRPC_MTLS=
-else
-	@unset GRPC_TLS
-	GRPC_TLS=
-endif
-
-check_mtls:
-ifeq ($(GRPC_MTLS),true)
-	@unset GRPC_TLS
-	@echo "gRPC MTLS is enabled"
-	GRPC_TLS=
-else
-	@unset GRPC_MTLS
-	GRPC_MTLS=
-endif
-
-check_certs: check_mtls check_tls
-ifeq ($(GRPC_MTLS_CERT_FILES_EXISTS),0)
-ifeq ($(filter true,$(GRPC_MTLS) $(GRPC_TLS)),true)
-ifeq ($(filter $(DEFAULT_DOCKER_COMPOSE_COMMAND),$(DOCKER_COMPOSE_COMMAND)),$(DEFAULT_DOCKER_COMPOSE_COMMAND))
-	$(MAKE) -C docker/ssl auth_grpc_certs things_grpc_certs
-endif
-endif
-endif
-
-run: check_certs
-	docker compose -f docker/docker-compose.yml --env-file docker/.env -p $(DOCKER_PROJECT) $(DOCKER_COMPOSE_COMMAND) $(args)
-
-run_addons: check_certs
-	$(foreach SVC,$(RUN_ADDON_ARGS),$(if $(filter $(SVC),$(ADDON_SERVICES) $(EXTERNAL_SERVICES)),,$(error Invalid Service $(SVC))))
-	@for SVC in $(RUN_ADDON_ARGS); do \
-		MG_ADDONS_CERTS_PATH_PREFIX="../."  docker compose -f docker/addons/$$SVC/docker-compose.yml -p $(DOCKER_PROJECT) --env-file ./docker/.env $(DOCKER_COMPOSE_COMMAND) $(args) & \
-	done
