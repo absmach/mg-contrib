@@ -18,7 +18,7 @@ require (
 	github.com/gookit/color v1.5.4
 	github.com/gopcua/opcua v0.1.6
 	github.com/gorilla/websocket v1.5.3
-	github.com/influxdata/influxdb-client-go/v2 v2.13.0
+	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/ivanpirog/coloredcobra v1.0.1
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/jackc/pgx/v5 v5.6.0
