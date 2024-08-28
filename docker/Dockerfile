@@ -1,7 +1,7 @@
 # Copyright (c) Abstract Machines
 # SPDX-License-Identifier: Apache-2.0
 
-FROM golang:1.22-alpine AS builder
+FROM golang:1.23-alpine AS builder
 ARG SVC
 ARG GOARCH
 ARG GOARM
@@ -12,8 +12,9 @@ ARG TIME
 WORKDIR /go/src/github.com/mg-contirb
 COPY . .
 RUN apk update \
-    && apk add make\
+    && apk add make upx\
     && make $SVC \
+    && upx build/$SVC \
     && mv build/$SVC /exe
 
 FROM scratch
