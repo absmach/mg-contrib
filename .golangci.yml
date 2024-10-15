@@ -28,7 +28,6 @@ linters-settings:
         alias: repoerr
       - pkg: github.com/absmach/magistrala/pkg/sdk/mocks
         alias: sdkmocks
-
   gocritic:
     enabled-checks:
       - importShadow
@@ -84,8 +83,7 @@ linters:
     - dogsled
     - errchkjson
     - errname
-    - execinquery
-    - exportloopref
+    - copyloopvar
     - ginkgolinter
     - gocheckcompilerdirectives
     - gofumpt
