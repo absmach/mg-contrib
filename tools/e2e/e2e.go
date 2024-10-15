@@ -250,19 +250,19 @@ func createThings(s sdk.SDK, conf Config, token string) ([]sdk.Thing, error) {
 		for i := 0; i < batches; i++ {
 			ths, err := createThingsInBatch(s, conf, token, batchSize)
 			if err != nil {
-				return []sdk.Thing{}, fmt.Errorf("Failed to create the things: %w", err)
+				return []sdk.Thing{}, fmt.Errorf("failed to create the things: %w", err)
 			}
 			things = append(things, ths...)
 		}
 		ths, err := createThingsInBatch(s, conf, token, conf.Num%uint64(batchSize))
 		if err != nil {
-			return []sdk.Thing{}, fmt.Errorf("Failed to create the things: %w", err)
+			return []sdk.Thing{}, fmt.Errorf("failed to create the things: %w", err)
 		}
 		things = append(things, ths...)
 	} else {
 		ths, err := createThingsInBatch(s, conf, token, conf.Num)
 		if err != nil {
-			return []sdk.Thing{}, fmt.Errorf("Failed to create the things: %w", err)
+			return []sdk.Thing{}, fmt.Errorf("failed to create the things: %w", err)
 		}
 		things = append(things, ths...)
 	}
@@ -295,19 +295,19 @@ func createChannels(s sdk.SDK, conf Config, token string) ([]sdk.Channel, error)
 		for i := 0; i < batches; i++ {
 			chs, err := createChannelsInBatch(s, conf, token, batchSize)
 			if err != nil {
-				return []sdk.Channel{}, fmt.Errorf("Failed to create the channels: %w", err)
+				return []sdk.Channel{}, fmt.Errorf("failed to create the channels: %w", err)
 			}
 			channels = append(channels, chs...)
 		}
 		chs, err := createChannelsInBatch(s, conf, token, conf.Num%uint64(batchSize))
 		if err != nil {
-			return []sdk.Channel{}, fmt.Errorf("Failed to create the channels: %w", err)
+			return []sdk.Channel{}, fmt.Errorf("failed to create the channels: %w", err)
 		}
 		channels = append(channels, chs...)
 	} else {
 		chs, err := createChannelsInBatch(s, conf, token, conf.Num)
 		if err != nil {
-			return []sdk.Channel{}, fmt.Errorf("Failed to create the channels: %w", err)
+			return []sdk.Channel{}, fmt.Errorf("failed to create the channels: %w", err)
 		}
 		channels = append(channels, chs...)
 	}
@@ -572,7 +572,7 @@ func messaging(s sdk.SDK, conf Config, token string, things []sdk.Thing, channel
 
 func sendHTTPMessage(s sdk.SDK, msg string, thing sdk.Thing, chanID string) error {
 	if err := s.SendMessage(chanID, msg, thing.Credentials.Secret); err != nil {
-		return fmt.Errorf("HTTP failed to send message from thing %s to channel %s: %w", thing.ID, chanID, err)
+		return fmt.Errorf("failed to send HTTP message from thing %s to channel %s: %w", thing.ID, chanID, err)
 	}
 
 	return nil
@@ -581,7 +581,7 @@ func sendHTTPMessage(s sdk.SDK, msg string, thing sdk.Thing, chanID string) erro
 func sendCoAPMessage(msg string, thing sdk.Thing, chanID string) error {
 	cmd := exec.Command("coap-cli", "post", fmt.Sprintf("channels/%s/messages", chanID), "--auth", thing.Credentials.Secret, "-d", msg)
 	if _, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("CoAP failed to send message from thing %s to channel %s: %w", thing.ID, chanID, err)
+		return fmt.Errorf("failed to send CoAP message from thing %s to channel %s: %w", thing.ID, chanID, err)
 	}
 
 	return nil
@@ -590,7 +590,7 @@ func sendCoAPMessage(msg string, thing sdk.Thing, chanID string) error {
 func sendMQTTMessage(msg string, thing sdk.Thing, chanID string) error {
 	cmd := exec.Command("mosquitto_pub", "--id-prefix", "magistrala", "-u", thing.ID, "-P", thing.Credentials.Secret, "-t", fmt.Sprintf("channels/%s/messages", chanID), "-h", "localhost", "-m", msg)
 	if _, err := cmd.CombinedOutput(); err != nil {
-		return fmt.Errorf("MQTT failed to send message from thing %s to channel %s: %w", thing.ID, chanID, err)
+		return fmt.Errorf("failed to send MQTT message from thing %s to channel %s: %w", thing.ID, chanID, err)
 	}
 
 	return nil
