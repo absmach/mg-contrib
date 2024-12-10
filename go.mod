@@ -17,7 +17,7 @@ require (
 	github.com/gocql/gocql v1.7.0
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gookit/color v1.5.4
-	github.com/gopcua/opcua v0.1.6
+	github.com/gopcua/opcua v0.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/ivanpirog/coloredcobra v1.0.1
